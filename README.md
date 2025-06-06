@@ -28,6 +28,9 @@ A mobile app built with **React Native**, powered by **Expo**, styled using **Na
 
 ### 1. Install dependencies
 
+![image](https://github.com/user-attachments/assets/eeffea56-e187-43ae-9f95-2c54b026d437)
+
+
 ```bash
 npm install
 npx expo start
