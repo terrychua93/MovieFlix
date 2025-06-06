@@ -24,11 +24,14 @@ A mobile app built with **React Native**, powered by **Expo**, styled using **Na
 
 ---
 
+## 📷 ScreenShot
+
+
+---
+
 ## 🚀 Getting Started
 
 ### 1. Install dependencies
-
-![image](https://github.com/user-attachments/assets/eeffea56-e187-43ae-9f95-2c54b026d437)
 
 
 ```bash
