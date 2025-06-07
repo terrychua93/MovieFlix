@@ -9,23 +9,18 @@ const _layout = () => {
     <Tabs
       screenOptions={{
         tabBarShowLabel: false,
-        tabBarItemStyle:{
-          width: '100%',
-          height: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-        },
         tabBarStyle:{
           backgroundColor: '#0f0d23',
           borderRadius: 50,
           marginHorizontal: 20,
-          marginBottom: 36,
-          height: 52,
+          height: 50,
+          width:`auto`,
           position: 'absolute',
+          bottom:20,
           borderWidth: 1,
           borderColor: "#0f0d23",
           overflow: 'hidden',
-        }
+        },
       }}
     >
       {tabScreenData.map(({ name, title, icon }) => (
