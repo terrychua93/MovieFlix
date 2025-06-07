@@ -26,15 +26,10 @@ const Search = () => {
     setSearchQuery(text);
   };
 
-  // Debounced search effect
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
       if (searchQuery.trim()) {
         await loadMedia();
-        console.log('media',media)
-        if (media?.results?.length && media.results[0]) {
-          await updateSearchCount(searchQuery, media.results[0]);
-        }
       } else {
         reset();
       }
@@ -55,7 +50,7 @@ const Search = () => {
         className="px-5"
         data={media?.results ?? []}
         keyExtractor={(item) => `${item.media_type}-${item.id}`}
-        renderItem={({ item }) => <MediaItem {...item} />}
+        renderItem={({ item }) => <MediaItem {...item} onPress={() => updateSearchCount(searchQuery, item)}/>}
         numColumns={3}
         columnWrapperStyle={{
           justifyContent: "flex-start",
