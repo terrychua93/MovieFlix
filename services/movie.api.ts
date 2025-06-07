@@ -61,6 +61,42 @@ export const fetchDiscoverMulti = async (): Promise<MediaItem[]> => {
   return [...movies, ...tvShows].sort((a, b) => b.popularity - a.popularity);
 };
 
+export const fetchKoreanDramas = async (): Promise<MediaItem[]> => {
+  const res = await fetch(
+    `${TMDB_CONFIG.BASE_URL}/discover/tv?sort_by=popularity.desc&with_original_language=ko&with_genres=18`,
+    {
+      headers: TMDB_CONFIG.headers,
+    }
+  );
+
+  const data = await res.json();
+
+  const dramas = data.results.map((item: any) => ({
+    ...item,
+    media_type: "tv",
+  }));
+
+  return dramas;
+};
+
+export const fetchJapaneseAnime = async (): Promise<MediaItem[]> => {
+  const res = await fetch(
+    `${TMDB_CONFIG.BASE_URL}/discover/tv?sort_by=popularity.desc&with_original_language=ja&with_genres=16`,
+    {
+      headers: TMDB_CONFIG.headers,
+    }
+  );
+
+  const data = await res.json();
+
+  const anime = data.results.map((item: any) => ({
+    ...item,
+    media_type: "tv",
+  }));
+
+  return anime;
+};
+
 // Fetch details for a movie
 export const fetchMovieDetails = async (movieId: string): Promise<MovieDetails> => {
   const url = `${TMDB_CONFIG.BASE_URL}/movie/${movieId}?api_key=${TMDB_CONFIG.API_KEY}`;

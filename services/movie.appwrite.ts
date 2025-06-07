@@ -18,7 +18,6 @@ export const updateSearchCount = async (query: string, media: MediaItem) => {
     const title = media_type === "movie" ? (media as Movie).title : (media as TVShow).name;
 
     const result = await database.listDocuments(DATABASE_ID, COLLECTION_ID, [
-      Query.equal("searchTerm", query),
       Query.equal("media_id", media.id),
     ]);
 
@@ -44,7 +43,6 @@ export const updateSearchCount = async (query: string, media: MediaItem) => {
         poster_url: `${environment.POSTER_URL}${media.poster_path}`,
       });
 
-      console.log('success')
     }
   } catch (error) {
     console.error("Error updating search count:", error);

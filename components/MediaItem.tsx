@@ -16,8 +16,12 @@ interface Media {
   first_air_date?: string;  // For TV shows
 }
 
+interface MediaItemProps extends Media {
+  onPress?: () => void;
+}
 
-const MediaItem = (item: Media) => {
+
+const MediaItem = (item: MediaItemProps) => {
   const isMovie = item.media_type === "movie";
   const displayTitle = isMovie ? item.title : item.name;
   const displayDate = isMovie ? item.release_date : item.first_air_date;
@@ -26,14 +30,14 @@ const MediaItem = (item: Media) => {
   return (
     // @ts-ignore
     <Link href={item.media_type === 'movie' ? `/movies/${item.id}` : `/tvs/${item.id}`} asChild>
-      <TouchableOpacity className="w-[30%]">
+      <TouchableOpacity className="w-[9rem] relative" onPress={item.onPress}>
         <Image
           source={{
             uri: item.poster_path
               ? `${environment.POSTER_URL}${item.poster_path}`
               : "https://placehold.co/600x400/1a1a1a/FFFFFF.png",
           }}
-          className="w-full h-52 rounded-lg"
+          className="w-[9rem] h-52 rounded-lg"
           resizeMode="cover"
         />
         <Text className="text-sm font-bold text-white mt-2" numberOfLines={1}>
