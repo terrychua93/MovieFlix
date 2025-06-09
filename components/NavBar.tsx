@@ -1,3 +1,4 @@
+import tagData from "@/data/tag.data";
 import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import {
@@ -12,10 +13,10 @@ import Tag from "./Tag";
 
 interface NavbarProps {
   scrollY: Animated.Value;
-  onPressTag?: (tag: "Movies" | "TV Shows") => void;
+  onPressTag?: (tag: string) => void;
 }
 
-const Navbar = ({ scrollY, onPressTag  }: NavbarProps) => {
+const Navbar = ({ scrollY, onPressTag }: NavbarProps) => {
   const router = useRouter();
 
   const headerHeight = scrollY.interpolate({
@@ -91,8 +92,13 @@ const Navbar = ({ scrollY, onPressTag  }: NavbarProps) => {
           },
         ]}
       >
-        <Tag label="TV Shows" onPress={() => onPressTag?.("TV Shows")} />
-        <Tag label="Movies" onPress={() => onPressTag?.("Movies")} />
+        {tagData.map((tag) => (
+          <Tag
+            key={tag.value}
+            label={tag.label}
+            onPress={() => onPressTag?.(tag.label)}
+          />
+        ))}
       </Animated.View>
     </Animated.View>
   );
@@ -104,7 +110,7 @@ const styles = StyleSheet.create({
     top: 0,
     width: "100%",
     backgroundColor: "rgba(12,27,33,0.80)",
-    backdropFilter: 'blur(10px)',
+    backdropFilter: "blur(10px)",
     paddingTop: Platform.OS === "ios" ? 50 : 30,
     zIndex: 1000,
     flexDirection: "column",
@@ -138,18 +144,18 @@ const styles = StyleSheet.create({
     borderRadius: 17,
     marginLeft: 6,
   },
-headerRow: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  width: '100%',
-  marginTop: 10,
-},
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: 10,
+  },
 
-tagRow: {
-  flexDirection: 'row',
-  marginRight: 'auto'  
-},
+  tagRow: {
+    flexDirection: "row",
+    marginRight: "auto",
+  },
 });
 
 export default Navbar;

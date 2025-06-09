@@ -24,8 +24,9 @@ import { useFocusEffect } from "expo-router";
 export default function Index() {
   const scrollRef = useRef<ScrollView | null>(null);
   const scrollY = useRef(new Animated.Value(0)).current;
-  const latestMoviesRef = useRef<View | null>(null);
-  const latestSeriesRef = useRef<View | null>(null);
+  const latestMoviesRef = useRef<View | null>(null),
+        latestSeriesRef = useRef<View | null>(null),
+        latestAnimeRef = useRef<View | null>(null);
 
   const {
     data: mediaItems,
@@ -78,6 +79,7 @@ export default function Index() {
         onPressTag={(label) => {
           if (label === "Movies") scrollToSection(latestMoviesRef);
           if (label === "TV Shows") scrollToSection(latestSeriesRef);
+          if (label === "Anime") scrollToSection(latestAnimeRef);
         }}
       />
 
@@ -154,7 +156,9 @@ export default function Index() {
             />
 
             {/* Anime */}
-            <Text className="text-lg text-white font-bold mb-3">Japanese Anime</Text>
+            <View ref={latestAnimeRef}>
+              <Text className="text-lg text-white font-bold mb-3">Japanese Anime</Text>
+            </View>
             <FlatList
               horizontal
               data={japaneseAnime}
