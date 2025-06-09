@@ -16,7 +16,7 @@ const _layout = () => {
           height: 50,
           width:`auto`,
           position: 'absolute',
-          bottom:20,
+          bottom:40,
           borderWidth: 1,
           borderColor: "#0f0d23",
           overflow: 'hidden',

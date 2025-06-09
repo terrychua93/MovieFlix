@@ -1,8 +1,17 @@
+import React, { useCallback, useRef } from "react";
+import {
+  ActivityIndicator,
+  Animated,
+  FlatList,
+  Platform,
+  ScrollView,
+  Text,
+  View
+} from "react-native";
+
 import MediaItem from "@/components/MediaItem";
-import SearchBar from "@/components/SearchBar";
+import Navbar from "@/components/NavBar";
 import TrendingCard from "@/components/TrendingCard";
-import { icons } from "@/constants/icons";
-import { images } from "@/constants/images";
 import {
   fetchDiscoverMulti,
   fetchJapaneseAnime,
@@ -10,19 +19,13 @@ import {
 } from "@/services/movie.api";
 import { getTrendingMovies } from "@/services/movie.appwrite";
 import useFetch from "@/services/usefetch";
-import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { useFocusEffect } from "expo-router";
 
 export default function Index() {
-  const router = useRouter();
+  const scrollRef = useRef<ScrollView | null>(null);
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const latestMoviesRef = useRef<View | null>(null);
+  const latestSeriesRef = useRef<View | null>(null);
 
   const {
     data: mediaItems,
@@ -51,11 +54,8 @@ export default function Index() {
     error: animeError,
   } = useFetch(() => fetchJapaneseAnime());
 
-  // Filter movies and tv shows from combined results
-  const latestMovies =
-    mediaItems?.filter((item) => item.media_type === "movie") ?? [];
-  const latestSeries =
-    mediaItems?.filter((item) => item.media_type === "tv") ?? [];
+  const latestMovies = mediaItems?.filter((item) => item.media_type === "movie") ?? [];
+  const latestSeries = mediaItems?.filter((item) => item.media_type === "tv") ?? [];
 
   useFocusEffect(
     useCallback(() => {
@@ -63,155 +63,110 @@ export default function Index() {
     }, [])
   );
 
+  const scrollToSection = (ref: React.RefObject<View | null>) => {
+    if (ref.current && scrollRef.current) {
+      ref.current.measureInWindow((x, y) => {
+        scrollRef.current?.scrollTo({ y: y - 150, animated: true }); // adjust 100 to match navbar height
+      });
+    }
+  };
+
   return (
     <View className="flex-1 bg-primary">
-      <Image source={images.bg} className="absolute !w-[100%] z-0" />
-      <ScrollView
-        className="flex-1 px-5"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ minHeight: "100%", paddingBottom: 10 }}
+      <Navbar
+        scrollY={scrollY}
+        onPressTag={(label) => {
+          if (label === "Movies") scrollToSection(latestMoviesRef);
+          if (label === "TV Shows") scrollToSection(latestSeriesRef);
+        }}
+      />
+
+      <Animated.ScrollView
+        ref={scrollRef}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+        contentContainerStyle={{
+          paddingTop: Platform.OS === "ios" ? 100 : 80,
+          paddingBottom: 60,
+        }}
       >
-        <Image source={icons.logo} className="w-12 h-10 mt-20 mb-5 mx-auto" />
-
-        {mediaLoading || trendingLoading ? (
-          <ActivityIndicator
-            size={"large"}
-            color={"#0000ff"}
-            className="mt-10 self-center"
-          />
-        ) : mediaError || trendingError ? (
-          <Text>Error: {mediaError?.message || trendingError?.message}</Text>
+        {mediaLoading || trendingLoading || koreanLoading || animeLoading ? (
+          <ActivityIndicator size="large" color="#fff" className="mt-10 self-center" />
         ) : (
-          <View className="flex-1 mt-5">
-            <SearchBar
-              onPress={() => {
-                router.push("/search");
-              }}
-              placeholder="Search for a movie"
-            />
-
-            {trendingMovies && (
-              <View className="mt-10">
-                <Text className="text-lg text-white font-bold mb-3">
-                  Trending Movies
-                </Text>
-                {trendingMovies.length > 0 ? (
-                  <FlatList
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    className="mb-4 mt-3"
-                    data={trendingMovies}
-                    contentContainerStyle={{ gap: 26 }}
-                    renderItem={({ item, index }) => (
-                      <TrendingCard media={item} index={index} />
-                    )}
-                    keyExtractor={(item) => item.media_id.toString()}
-                    ItemSeparatorComponent={() => <View className="w-4" />}
-                  />
-                ) : (
-                  <View className="h-40 flex items-center justify-center m-3">
-                    <Text className="text-white text-base">
-                      There is no trending movie yet.
-                    </Text>
-                  </View>
+          <View className="flex-1 mt-10">
+            {/* Trending */}
+            <View className="mt-14 mb-3">
+              <Text className="text-lg text-white font-bold mb-3">Trending Movies</Text>
+              <FlatList
+                horizontal
+                data={trendingMovies}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ gap: 26 }}
+                renderItem={({ item, index }) => (
+                  <TrendingCard media={item} index={index} />
                 )}
-              </View>
-            )}
+                keyExtractor={(item) => item.media_id.toString()}
+                ItemSeparatorComponent={() => <View className="w-4" />}
+              />
+            </View>
 
-            {/* Latest Movies Section */}
-            <Text className="text-lg text-white font-bold mb-3">
-              Latest Movies
-            </Text>
-
+            {/* Movies */}
+            <View ref={latestMoviesRef}>
+              <Text className="text-lg text-white font-bold mb-3">Latest Movies</Text>
+            </View>
             <FlatList
               horizontal
-              showsHorizontalScrollIndicator={false}
-              className="mb-4 mt-3"
               data={latestMovies}
+              showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ gap: 26 }}
               renderItem={({ item }) => <MediaItem {...item} />}
               keyExtractor={(item) => item.id.toString()}
               ItemSeparatorComponent={() => <View className="w-4" />}
             />
 
-            {/* Latest Series Section */}
-            <Text className="text-lg text-white font-bold mb-3 mt-8">
-              Latest Series
-            </Text>
-
+            {/* Series */}
+            <View ref={latestSeriesRef}>
+              <Text className="text-lg text-white font-bold mb-3">Latest Series</Text>
+            </View>
             <FlatList
               horizontal
-              showsHorizontalScrollIndicator={false}
-              className="mb-4 mt-3"
               data={latestSeries}
+              showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ gap: 26 }}
               renderItem={({ item }) => <MediaItem {...item} />}
               keyExtractor={(item) => item.id.toString()}
               ItemSeparatorComponent={() => <View className="w-4" />}
             />
 
-            {/* Korean Drama Section */}
-            <Text className="text-lg text-white font-bold mb-3 mt-8">
-              Korean Dramas
-            </Text>
+            {/* Korean Dramas */}
+            <Text className="text-lg text-white font-bold mb-3">Korean Dramas</Text>
+            <FlatList
+              horizontal
+              data={koreanDramas}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ gap: 26 }}
+              renderItem={({ item }) => <MediaItem {...item} />}
+              keyExtractor={(item) => item.id.toString()}
+              ItemSeparatorComponent={() => <View className="w-4" />}
+            />
 
-            {!koreanLoading && koreanDramas?.length ? (
-              <FlatList
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                className="mb-4 mt-3"
-                data={koreanDramas}
-                contentContainerStyle={{ gap: 26 }}
-                renderItem={({ item }) => <MediaItem {...item} />}
-                keyExtractor={(item) => item.id.toString()}
-                ItemSeparatorComponent={() => <View className="w-4" />}
-              />
-            ) : koreanLoading ? (
-              <ActivityIndicator size="small" color="#999" />
-            ) : koreanError ? (
-              <Text className="text-red-500">
-                Failed to load Korean dramas.
-              </Text>
-            ) : (
-              <View className="h-40 flex items-center justify-center m-3">
-                <Text className="text-white text-base">
-                  No Korean dramas found.
-                </Text>
-              </View>
-            )}
-
-            {/* Korean Drama Section */}
-            <Text className="text-lg text-white font-bold mb-3 mt-8">
-              Japanese Anime
-            </Text>
-
-            {!animeLoading && japaneseAnime?.length ? (
-              <FlatList
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                className="mb-32 mt-3"
-                data={japaneseAnime}
-                contentContainerStyle={{ gap: 26 }}
-                renderItem={({ item }) => <MediaItem {...item} />}
-                keyExtractor={(item) => item.id.toString()}
-                ItemSeparatorComponent={() => <View className="w-4" />}
-              />
-            ) : koreanLoading ? (
-              <ActivityIndicator size="small" color="#999" />
-            ) : koreanError ? (
-              <Text className="text-red-500">
-                Failed to load Japanese anime.
-              </Text>
-            ) : (
-              <View className="h-40 flex items-center justify-center m-3">
-                <Text className="text-white text-base">
-                  No Japanese anime found.
-                </Text>
-              </View>
-            )}
+            {/* Anime */}
+            <Text className="text-lg text-white font-bold mb-3">Japanese Anime</Text>
+            <FlatList
+              horizontal
+              data={japaneseAnime}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ gap: 26 }}
+              renderItem={({ item }) => <MediaItem {...item} />}
+              keyExtractor={(item) => item.id.toString()}
+              ItemSeparatorComponent={() => <View className="w-4" />}
+            />
           </View>
         )}
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }

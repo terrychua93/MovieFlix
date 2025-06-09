@@ -33,8 +33,6 @@ const TVDetails = () => {
 
   const { data: tv, loading } = useFetch(() => fetchTVDetails(id));
 
-  console.log('data',tv)
-
   if (loading)
     return (
       <SafeAreaView className="bg-primary flex-1 justify-center items-center">
@@ -73,6 +71,12 @@ const TVDetails = () => {
         <View className="flex-col items-start justify-center mt-5 px-5">
           <Text className="text-white font-bold text-xl">{tv.name}</Text>
 
+          {tv.tagline ? (
+            <Text className="text-light-200 italic text-sm mt-1">
+              "{tv.tagline}"
+            </Text>
+          ) : null}
+
           <View className="flex-row items-center gap-x-1 mt-2">
             <Text className="text-light-200 text-sm">
               {tv.first_air_date?.split("-")[0]} •
@@ -92,19 +96,59 @@ const TVDetails = () => {
             </Text>
           </View>
 
+          {/* Info Items */}
           <InfoItem label="Overview" value={tv.overview} />
           <InfoItem
             label="Genres"
-            value={tv.genres?.map((g) => g.name).join(" • ") ?? "N/A"}
+            value={tv.genres?.map((g) => g.name).join(" • ")}
           />
           <InfoItem
-            label="Production Companies"
-            value={
-              tv.production_companies
-                ?.map((c) => c.name)
-                .join(" • ") ?? "N/A"
-            }
+            label="Created By"
+            value={tv.created_by?.map((c) => c.name).join(", ")}
           />
+          <InfoItem label="Original Name" value={tv.original_name} />
+          <InfoItem
+            label="Spoken Languages"
+            value={tv.spoken_languages?.map((l) => l.english_name).join(" • ")}
+          />
+          <InfoItem
+            label="Origin Country"
+            value={tv.origin_country?.join(", ")}
+          />
+          <InfoItem label="Type" value={tv.type} />
+          <InfoItem
+            label="Production Companies"
+            value={tv.production_companies
+              ?.map((c) => c.name)
+              .join(" • ")}
+          />
+
+          {/* Seasons Section */}
+          {tv.seasons?.length > 0 && (
+            <View className="mt-8 w-full">
+              <Text className="text-white font-bold text-lg mb-2">
+                Seasons
+              </Text>
+              {tv.seasons.map((season) => (
+                <View
+                  key={season.id}
+                  className="mt-4 border-b border-dark-100 pb-4"
+                >
+                  <Text className="text-light-100 font-semibold">
+                    {season.name} ({season.air_date?.split("-")[0] ?? "N/A"})
+                  </Text>
+                  <Text className="text-light-200 text-sm">
+                    {season.episode_count} episodes
+                  </Text>
+                  {season.overview ? (
+                    <Text className="text-light-300 text-xs mt-1">
+                      {season.overview}
+                    </Text>
+                  ) : null}
+                </View>
+              ))}
+            </View>
+          )}
         </View>
       </ScrollView>
 
