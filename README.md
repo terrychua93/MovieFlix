@@ -27,7 +27,7 @@ A mobile app built with **React Native**, powered by **Expo**, styled using **Na
 ## 📷 ScreenShot
 
 ![image](https://github.com/user-attachments/assets/880be6e0-f516-449a-b4f8-111362ef826d)
-![image](https://github.com/user-attachments/assets/9a7d6f12-8be5-46a5-8642-b0c4c33d6c06)
+![image](https://github.com/user-attachments/assets/b4e07c02-fc5f-47ac-8632-78373632426c)
 ![image](https://github.com/user-attachments/assets/8f6ff34b-8e99-40bf-a091-e48226b963be)
 ![image](https://github.com/user-attachments/assets/5abf3fac-5961-4eec-bb3e-a121783462e2)
 
