@@ -50,6 +50,13 @@ interface TrendingCardProps {
   index: number;
 }
 
+interface BookmarkItem {
+  title: string;
+  media_type: "movie" | "tv";
+  poster_url: string;
+  media_id: number;
+}
+
 interface MovieDetails {
   adult: boolean;
   backdrop_path: string | null;

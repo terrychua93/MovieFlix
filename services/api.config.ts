@@ -11,7 +11,8 @@ export const TMDB_CONFIG ={
 
 export const APPWRITE_CONFIG={
     DATABASE_ID: environment.APPWRITE_DATABASE_ID,
-    COLLECTION_ID: environment.APPWRITE_COLLECTION_ID,
+    METRICS_ID: environment.APPWRITE_METRICS_ID,
+    BOOKMARKS_ID: environment.APPWRITE_BOOKMARKS_ID,
     PROJECT_ID: environment.APPWRITE_PROJECT_ID,
     APPWRITE_URL: environment.APPWRITE_URL
 }

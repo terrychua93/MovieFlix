@@ -5,6 +5,6 @@ export const environment = {
   APPWRITE_PROJECT_ID : "683f1f90002845e1fb73",
   APPWRITE_API_ENDPOINT: "https://fra.cloud.appwrite.io/v1",
   APPWRITE_DATABASE_ID : "683f216f0038b865afe2",
-  APPWRITE_COLLECTION_ID: "683f21e90004e64e35e9",
+  APPWRITE_METRICS_ID: "683f21e90004e64e35e9",
   APPWRITE_URL: "https://cloud.appwrite.io/v1"
 };

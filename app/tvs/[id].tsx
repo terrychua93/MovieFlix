@@ -11,6 +11,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { icons } from "@/constants/icons";
 import { fetchTVDetails } from "@/services/movie.api";
+import {
+  createBookmarkIfNotExists,
+} from "@/services/movie.appwrite";
 import useFetch from "@/services/usefetch";
 
 interface InfoProps {
@@ -32,6 +35,23 @@ const TVDetails = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const { data: tv, loading } = useFetch(() => fetchTVDetails(id));
+
+  const handleBookmark = async () => {
+    if (!tv) return;
+
+    try {
+      const result = await createBookmarkIfNotExists(tv);
+
+      if (result.status === "exists") {
+        alert("Already Bookmarked");
+      } else {
+        alert("Bookmarked successfully");
+      }
+    } catch (error) {
+      alert("Bookmark failed");
+      console.error(error);
+    }
+  };
 
   if (loading)
     return (
@@ -64,6 +84,16 @@ const TVDetails = () => {
               source={icons.play}
               className="w-6 h-7 ml-1"
               resizeMode="stretch"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="absolute top-14 right-5 z-50 bg-white rounded-full p-2"
+            onPress={handleBookmark}
+          >
+            <Image
+              source={icons.save}
+              className="w-5 h-5"
+              resizeMode="contain"
             />
           </TouchableOpacity>
         </View>
@@ -118,17 +148,13 @@ const TVDetails = () => {
           <InfoItem label="Type" value={tv.type} />
           <InfoItem
             label="Production Companies"
-            value={tv.production_companies
-              ?.map((c) => c.name)
-              .join(" • ")}
+            value={tv.production_companies?.map((c) => c.name).join(" • ")}
           />
 
           {/* Seasons Section */}
           {tv.seasons?.length > 0 && (
             <View className="mt-8 w-full">
-              <Text className="text-white font-bold text-lg mb-2">
-                Seasons
-              </Text>
+              <Text className="text-white font-bold text-lg mb-2">Seasons</Text>
               {tv.seasons.map((season) => (
                 <View
                   key={season.id}

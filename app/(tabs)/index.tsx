@@ -92,7 +92,7 @@ export default function Index() {
         )}
         contentContainerStyle={{
           paddingTop: Platform.OS === "ios" ? 100 : 80,
-          paddingBottom: 60,
+          paddingBottom: 100,
         }}
       >
         {mediaLoading || trendingLoading || koreanLoading || animeLoading ? (
@@ -116,8 +116,8 @@ export default function Index() {
             </View>
 
             {/* Movies */}
-            <View ref={latestMoviesRef}>
-              <Text className="text-lg text-white font-bold mb-3">Latest Movies</Text>
+            <View ref={latestMoviesRef} className="mb-3">
+              <Text className="text-lg text-white font-bold">Latest Movies</Text>
             </View>
             <FlatList
               horizontal
@@ -130,7 +130,7 @@ export default function Index() {
             />
 
             {/* Series */}
-            <View ref={latestSeriesRef}>
+            <View ref={latestSeriesRef} className="mt-3">
               <Text className="text-lg text-white font-bold mb-3">Latest Series</Text>
             </View>
             <FlatList
@@ -144,7 +144,7 @@ export default function Index() {
             />
 
             {/* Korean Dramas */}
-            <Text className="text-lg text-white font-bold mb-3">Korean Dramas</Text>
+            <Text className="text-lg text-white font-bold mb-3 mt-3">Korean Dramas</Text>
             <FlatList
               horizontal
               data={koreanDramas}
@@ -156,7 +156,7 @@ export default function Index() {
             />
 
             {/* Anime */}
-            <View ref={latestAnimeRef}>
+            <View ref={latestSeriesRef} className="mt-3">
               <Text className="text-lg text-white font-bold mb-3">Japanese Anime</Text>
             </View>
             <FlatList
